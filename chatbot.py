@@ -16,15 +16,15 @@ if not GROQ_API_KEY:
 
 # Función para generar texto con Groq
 def generar_respuesta(prompt):
-    url = "https://api.groq.com/openai/v1/chat/completions"
-    
+    # Cambia este URL por el endpoint exacto de tu modelo en tu dashboard de Groq
+    url = "https://api.groq.ai/v1/models/llama3-8b-8192/chat/completions"
+
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
 
     data = {
-        "model": "llama3-8b-8192",   # Modelo rápido y gratuito
         "messages": [
             {"role": "system", "content": "Eres un asistente conversacional amable y útil."},
             {"role": "user", "content": prompt}
@@ -33,21 +33,33 @@ def generar_respuesta(prompt):
         "temperature": 0.7
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 200:
+            print("Error API Groq:", response.status_code, response.text)
+            return "Hubo un error con la IA."
 
-    if response.status_code != 200:
+        respuesta = response.json()
+        # Dependiendo de la estructura del endpoint, puede ser:
+        # respuesta["choices"][0]["message"]["content"]
+        # o respuesta["output_text"] (revisa tu dashboard de Groq)
+        if "choices" in respuesta:
+            return respuesta["choices"][0]["message"]["content"]
+        elif "output_text" in respuesta:
+            return respuesta["output_text"]
+        else:
+            print("Respuesta inesperada:", respuesta)
+            return "Hubo un error con la IA."
+
+    except Exception as e:
+        print("Excepción al llamar a Groq:", e)
         return "Hubo un error con la IA."
-
-    respuesta = response.json()["choices"][0]["message"]["content"]
-    return respuesta
-
 
 # Función que responde mensajes en Telegram
 def responder(update, context):
     texto_usuario = update.message.text
     respuesta = generar_respuesta(texto_usuario)
     update.message.reply_text(respuesta)
-
 
 # Iniciar bot de Telegram
 updater = Updater(TOKEN, use_context=True)
@@ -58,8 +70,3 @@ dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, responder
 print("Bot IA (Versión 2) iniciado y escuchando mensajes...")
 updater.start_polling()
 updater.idle()
-
-
-
-
-
