@@ -1,46 +1,29 @@
 import os
-from transformers import pipeline
 from telegram.ext import Updater, MessageHandler, Filters
 
-# -----------------------------
-# 1. OBTENER TOKEN DESDE RAILWAY
-# -----------------------------
+# 1) Obtener TOKEN desde Railway
 TOKEN = os.getenv("TOKEN")
 if not TOKEN:
     print("ERROR: No existe la variable TOKEN.")
     exit()
 
-# -----------------------------
-# 2. CARGAR MODELO LIVIANO SIN TORCH
-# -----------------------------
-chatbot = pipeline(
-    task="text2text-generation",
-    model="google/flan-t5-small"
-)
-
-# -----------------------------
-# 3. FUNCIÓN QUE RESPONDE MENSAJES
-# -----------------------------
+# 2) Función que responde a cada mensaje
 def responder(update, context):
-    texto_usuario = update.message.text
+    usuario = update.message.from_user.first_name
+    texto = update.message.text
 
-    respuesta = chatbot(
-        texto_usuario,
-        max_length=60,
-        num_return_sequences=1
-    )[0]["generated_text"]
-
+    respuesta = f"Hola {usuario}! Dijiste: {texto}\nEsta es la versión 1 del bot, funcionando 24/7."
+    
     update.message.reply_text(respuesta)
 
-# -----------------------------
-# 4. INICIAR EL BOT DE TELEGRAM
-# -----------------------------
+# 3) Inicializar bot
 updater = Updater(TOKEN, use_context=True)
-dp = updater.dispatcher
+dispatcher = updater.dispatcher
 
-dp.add_handler(MessageHandler(Filters.text & ~Filters.command, responder))
+# 4) Manejar mensajes
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, responder))
 
-print("Bot iniciado y escuchando mensajes...")
+print("Bot iniciado (Versión 1) y escuchando mensajes...")
 updater.start_polling()
 updater.idle()
 
