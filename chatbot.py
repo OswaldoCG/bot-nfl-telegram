@@ -25,18 +25,24 @@ def generar_respuesta(prompt):
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
-    # Mensaje de sistema centrado en NFL
+    
+    # Mensaje de sistema centrado en NFL con alusiones y estilo de comentarista
+    system_msg = (
+        "Eres un asistente experto en NFL. Hablas como un comentarista deportivo y explicas "
+        "reglas, jugadas y estadísticas usando referencias a equipos, jugadores y partidos recientes. "
+        "Puedes usar humor y expresiones típicas de fans y comentaristas, siempre manteniendo precisión y claridad."
+    )
+    
+    # Prompt del usuario con contexto forzando respuestas centradas en NFL
+    user_msg = f"{prompt} Incluye referencias a equipos, jugadores y partidos recientes de la NFL, usando ejemplos cuando sea posible."
+
     data = {
-        "model": "llama-3.1-8b-instant",  # Modelo soportado actualmente
+        "model": "llama-3.1-8b-instant",
         "messages": [
-            {"role": "system", "content": (
-                "Eres un experto en NFL. Conoces reglas, jugadores, equipos, estadísticas "
-                "y noticias actuales de la liga. Responde de manera clara, precisa y centrada "
-                "solo en temas de la NFL, usando un lenguaje amigable para aficionados."
-            )},
-            {"role": "user", "content": f"{prompt} Responde solo sobre NFL, incluyendo reglas, estadísticas o jugadores si es necesario."}
+            {"role": "system", "content": system_msg},
+            {"role": "user", "content": user_msg}
         ],
-        "max_tokens": 300,
+        "max_tokens": 350,
         "temperature": 0.7
     }
 
@@ -71,4 +77,6 @@ def webhook():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port)
+
+
 
