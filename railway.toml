@@ -1,5 +1,1 @@
-[build]
-builder = "heroku/buildpacks:20"
 
-[start]
-cmd = "python3 chatbot.py"
