@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # ---------- CARGA DEL MODELO ----------
 chatbot = pipeline(
     "text-generation",
-    model="HuggingFaceH4/zephyr-7b-beta"
+    model="distilgpt2"
 )
 
 # ---------- FUNCIÓN DE RESPUESTA ----------
@@ -52,3 +52,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
