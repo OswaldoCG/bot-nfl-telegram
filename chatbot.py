@@ -18,8 +18,9 @@ logger = logging.getLogger(__name__)
 
 # ---------- CARGA DEL MODELO ----------
 chatbot = pipeline(
-    "text-generation",
-    model="distilgpt2"
+    task="text-generation",
+    model="google/flan-t5-small",
+    framework="tf"
 )
 
 # ---------- FUNCIÓN DE RESPUESTA ----------
@@ -52,4 +53,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
