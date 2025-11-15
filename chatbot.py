@@ -17,7 +17,7 @@ if not GROQ_API_KEY:
 # Función para generar texto con Groq
 def generar_respuesta(prompt):
     # Cambia este URL por el endpoint exacto de tu modelo en tu dashboard de Groq
-    url = "https://api.groq.ai/v1/models/llama3-8b-8192/chat/completions"
+    url = "https://api.groq.com/openai/v1"
 
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -70,3 +70,4 @@ dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, responder
 print("Bot IA (Versión 2) iniciado y escuchando mensajes...")
 updater.start_polling()
 updater.idle()
+
